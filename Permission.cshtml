@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Permissions for Role";
+    Layout = "_Layout";
+}
+
+<style>
+    .form-floating>.form-control:focus~label,
+    .form-floating>.form-control:not(:placeholder-shown)~label,
+    .form-floating>.form-select~label {
+      opacity: 1;
+      transform: scale(.85) translateY(-1.0rem) translateX(.15rem);
+      background-color: white;
+      width: fit-content;
+    }
+
+    .form-floating>.form-control:focus,
+    .form-floating>.form-control:not(:placeholder-shown) {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .form-control:focus {
+      color: #212529;
+      background-color: #fff;
+      border: 0.5px solid rgb(110, 87, 87);
+      outline: 0;
+      box-shadow: 0 0 0 white !important;
+    }
+
+    .form-switch .form-check-input {
+      width: 2.5em;
+      height: 1.5em;
+      background-position: left center;
+      border-radius: 2em;
+      transition: background-position .15s ease-in-out;
+    }
+
+    @@media (max-width:500px) {
+      .box {
+        overflow-x: auto !important;
+      }
+    }
+  </style>
+
+<div class="container-fluid d-flex align-items-center head-top" style="justify-content: space-between;">
+    <p class="headings fw-bold" style=" font-size: 30px;">Permissions for Role</p>
+    <div class="srch">
+        <button value="" class="add-btn" style="background-color: transparent; border:1px solid #0066a7; color: #0066a7;">
+            <a asp-action="Roles" style="text-decoration: none; color:#0066a7;">Back</a>
+        </button>
+    </div>
+</div>
+
+<div class="box">
+    <div id="main-content" style="margin: 0;">
+        <div>
+            <div class="form-floating mb-3 w-25 mt-4">
+                <input type="text" class="form-control roles-input" id="floatingInput" placeholder="Role"
+                    value="@ViewData["Rolename"]" disabled>
+                <label for="floatingInput" style="background: transparent;">Role</label>
+            </div>
+        </div>
+        <form method="post" action="@Url.Action("SavePermissions", "UserView")">
+            <input type="hidden" name="roleId" value="@ViewData["RoleId"]" />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 40px;">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" style="width: 12px !important; padding: 9px;">
+                        </th>
+                        <th scope="col">Permission</th>
+                        <th scope="col">Can View</th>
+                        <th scope="col">Can Add/Edit</th>
+                        <th scope="col">Can Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var permission in Model)
+                        {
+                            <tr>
+                                <th scope="row">
+                                    <input class="form-check-input cb" type="checkbox" name="permissions[@permission.PermissionId].IsChecked" value="true" 
+                                        @(permission.IsChecked ? "checked" : "") style="width: 12px !important; padding: 9px;">
+                                </th>
+                                <td>@permission.PermissionName</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="permissions[@permission.PermissionId].CanView" 
+                                            @(permission.CanView ? "checked" : "")>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="permissions[@permission.PermissionId].CanAddEdit" 
+                                            @(permission.CanAddEdit ? "checked" : "")>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="permissions[@permission.PermissionId].CanDelete" 
+                                            @(permission.CanDelete ? "checked" : "")>
+                                    </div>
+                                </td>
+
+                                <!-- Include a hidden field for MenuId to ensure it's posted -->
+                                <input type="hidden" name="permissions[@permission.PermissionId].MenuId" value="@permission.MenuId" />
+                            </tr>
+                        }
+                </tbody>
+            </table>
+
+            <div class="buttons" style="width:fit-content; margin-left: auto">
+                <button asp-action="SavePermissions" class="btn" type="submit" style="color: white; background: #0066a7; padding: 6px !important;">Save</button>
+                <button class="btn" type="button" style="background: transparent !important; border: 1px solid #0066a7; color: #0066a7; padding: 6px !important;"
+                    onclick="window.location.href='/UserView/Roles'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const mainCheck = document.getElementById("flexSwitchCheckDefault").addEventListener("change", function () {
+        let checkBoxes = document.querySelectorAll(".cb");
+        checkBoxes.forEach((checkBox) => {
+            checkBox.checked = this.checked;
+        });
+    });
+</script>

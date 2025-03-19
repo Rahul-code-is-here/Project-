@@ -1,0 +1,36 @@
+@model List<DAL.ViewModels.ItemViewModel>
+<div class="table-responsive">
+    <table class="table" style="border-top: none;">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 40px; border-top: none;">
+                    <input class="form-check-input main-check" type="checkbox" value="" id="flexCheckDefault">
+                </th>
+                <th scope="col" style="border-top: none;">Name</th>
+                <th scope="col" style="border-top: none;" class="text-center">Unit</th>
+                <th scope="col" style="border-top: none;" class="text-center">Rate</th>
+                <th scope="col" style="border-top: none;" class="text-center">Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="itemTableBody">
+            <!-- Items dynamically added from the database -->
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th scope="row" style="border-top: 1px solid rgb(182, 177, 177);">
+                        <input class="form-check-input cb delete-checkbox" type="checkbox" value="@item.Itemid"
+                            id="flexCheckDefault">
+                    </th>
+                    <td style="border-top: 1px solid rgb(182, 177, 177);">
+                        @item.Name
+                    </td>
+                    <td class="text-center" style="border-top: 1px solid rgb(182, 177, 177);">
+                        @item.Unit
+                    </td>
+                    <td class="text-center" style="border-top: 1px solid rgb(182, 177, 177);">@item.Rate</td>
+                    <td class="text-center" style="border-top: 1px solid rgb(182, 177, 177);">@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

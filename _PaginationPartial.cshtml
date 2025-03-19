@@ -1,0 +1,44 @@
+@{
+    var page = ViewBag.page as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 1;
+    var totalUsers = ViewBag.totalUsers as int? ?? 0;
+    var itemsPerPage = ViewBag.itemsPerPage as int? ?? 5;
+    var searchTerm = ViewData["SearchTerm"] as string ?? "";
+}
+
+<nav aria-label="Page navigation example" class="pe-3 pb-2" style="margin-top: 10px;">
+    <ul class="pagination justify-content-end">
+        <div class="d-flex justify-content-center">
+            <li class="d-flex align-items-center pe-3">Items per page</li>
+            <li class="d-flex align-items-center pe-3" style="border-radius: 5px; height: 40px;">
+                <select name="itemsPerPage" id="itemsPerPage" style="width: 60px; border-radius: 5px;"
+                        onchange="changePageSize()">
+                    <option selected>@ViewBag.itemsPerPage</option>
+                    <option value="1">1</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </li>
+        </div>
+
+        <div class="d-flex sec-pagin justify-content-center">
+            <li class="d-flex align-items-center pe-3">Showing @((page - 1) * itemsPerPage + 1) -
+                @Math.Min(page * itemsPerPage, totalUsers) of @totalUsers users</li>
+            <li class="page-item @((page == 1) ? "disabled" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Userlist", new { searchTerm, page = page - 1, itemsPerPage })"
+                   aria-label="Previous">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            </li>
+            <li class="page-item @((page == totalPages) ? "disabled" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Userlist", new { searchTerm, page = page + 1, itemsPerPage })"
+                   aria-label="Next">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </li>
+        </div>
+    </ul>
+</nav>

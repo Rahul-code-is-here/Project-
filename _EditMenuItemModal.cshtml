@@ -1,0 +1,183 @@
+@model DAL.ViewModels.MenuItemViewModel
+<div class="modal-dialog modal-dialog-centered modal-xl" style="margin-top: 0px; margin-bottom: 0px;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Menu Item</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editMenuItemForm" method="post"
+                enctype="multipart/form-data">
+                @if (Model.Items != null && Model.Items.Any())
+                {
+                    <input type="hidden" id="id" name="id" value="@Model.Items.First().Itemid" />
+                }
+                else
+                {
+                    <input type="hidden" id="id" name="id" value="0" /> @* Set default value when no items exist *@
+                }
+
+                <div class="row">
+                    <div class="row col-md-8">
+                        <!-- Category -->
+                        <div class="col-md-6 col-12">
+                            <label for="Categoryid" class="form-label">Category</label>
+                            <select class="form-select" id="Categoryid" name="Items[0].Categoryid" required>
+                                <option value="">Select a Category</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    @if (Model.Items != null && Model.Items.Any())
+                                    {
+                                        @if (category.Categoryid == Model.Items.First().CategoryId)
+                                        {
+                                            <option value="@category.Categoryid" selected>
+                                                @category.Name
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@category.Categoryid">
+                                                @category.Name
+                                            </option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="col-md-6 col-12">
+                            <label for="Name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="Name" name="Items[0].Name"
+                                value="@(Model.Items?.FirstOrDefault()?.Name ?? "")" required />
+                        </div>
+
+                        <!-- Item Type -->
+                        <div class="col-md-3 mt-3 col-12">
+                            <label for="ItemType" class="form-label">Item Type</label>
+                            <select class="form-select" id="ItemType" name="Items[0].ItemType">
+                                @if (Model.Items != null && Model.Items.Any())
+                                {
+                                    @if (Model.Items.First().Itemtype == false)
+                                    {
+                                        <option value="Veg" selected>Veg</option>
+                                        <option value="Non-Veg">Non-Veg</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Veg">Veg</option>
+                                        <option value="Non-Veg" selected>Non-Veg</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Rate -->
+                        <div class="col-md-3 mt-3">
+                            <label for="Rate" class="form-label">Rate</label>
+                            <input type="number" class="form-control" id="Rate" name="Items[0].Rate"
+                                value="@(Model.Items?.FirstOrDefault()?.Rate ?? 0)" required />
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="col-md-3 mt-3">
+                            <label for="Quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="Quantity" name="Items[0].Quantity"
+                                value="@(Model.Items?.FirstOrDefault()?.Quantity ?? 0)" required />
+                        </div>
+
+                        <!-- Unit -->
+                        <div class="col-md-3 mt-3">
+                            <label for="Unit" class="form-label">Unit</label>
+                            <select class="form-select" id="Unit" name="Items[0].Unit">
+                                @if (Model.Items != null && Model.Items.Any())
+                                {
+                                    @if (Model.Items.First().Unit == "Piece")
+                                    {
+                                        <option value="Piece" selected>Piece</option>
+                                        <option value="Gram">Gram</option>
+                                        <option value="Liter">Liter</option>
+                                    }
+                                    else if (Model.Items.First().Unit == "Gram")
+                                    {
+                                        <option value="Piece">Piece</option>
+                                        <option value="Gram" selected>Gram</option>
+                                        <option value="Liter">Liter</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Piece">Piece</option>
+                                        <option value="Gram">Gram</option>
+                                        <option value="Liter" selected>Liter</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Availability Toggle -->
+                        <div class="col-md-3 mt-3 d-flex text-center align-items-center justify-content-center">
+                            <div class="form-check form-switch">
+                                <!-- Hidden field to ensure false is sent when unchecked -->
+                                <input type="hidden" name="Items[0].Isavailable" value="false" />
+
+                                <input class="form-check-input" type="checkbox" role="switch" id="IsAvailable"
+                                    name="Items[0].Isavailable" value="true" @(Model.Items.FirstOrDefault()?.Isavailable == true
+                                ? "checked" : "") />
+
+                                <label class="form-check-label" for="IsAvailable">Available</label>
+                            </div>
+                        </div>
+
+                        <!-- Tax Percentage -->
+                        <div class="col-md-3 mt-3">
+                            <label for="TaxPercentage" class="form-label">Tax Percentage</label>
+                            <input type="number" class="form-control" id="TaxPercentage" name="Items[0].Tax"
+                               value="@(Model.Items?.FirstOrDefault()?.Tax ?? 0)" />
+                        </div>
+
+                        <!-- Short Code -->
+                        <div class="col-md-3 mt-3">
+                            <label for="ShortCode" class="form-label">Short Code</label>
+                            <input type="text" class="form-control" id="ShortCode" name="Items[0].ItemShortCode"
+                                value="@(Model.Items?.FirstOrDefault()?.ItemShortCode ?? "")" />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-md-12 mt-3">
+                            <label for="Description" class="form-label">Description</label>
+                            <textarea class="form-control" id="Description"
+                                name="Items[0].Description">@Model.Items.FirstOrDefault()?.Description</textarea>
+                        </div>
+
+                        <!-- Upload Image -->
+                        <div class="col-md-12 mt-3">
+                            <label for="Image" class="form-label">Upload Image</label>
+                            <div class="border p-3 text-center" style="border: 2px dashed #ccc;">
+                                <input type="file" id="ImageForEditing" name="ItemPhoto" class="form-control" />
+                                <label for="Image" class="text-primary">Drag and Drop or Browse Files</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="background-color: #fdf5e6;">
+                        <!-- Modifier Groups -->
+                        <div class="mt-3">
+                            <label for="ModifierGroups" class="form-label">Modifier Groups</label>
+                            <select class="form-select" id="ModifierGroups" name="ModifierGroups">
+                                <option value="">Select Modifier Group(s)</option>
+                                <option value="Cheese">Cheese</option>
+                                <option value="Sauces">Sauces</option>
+                                <option value="Extras">Extras</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="padding: 6px !important; border: 1px solid #0066a7; background: transparent; color: #0066a7;">Cancel</button>
+            <button type="submit" class="btn btn-primary" form="editMenuItemForm"
+                style="padding: 6px !important;">Save</button>
+        </div>
+    </div>
+</div>

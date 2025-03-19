@@ -1,0 +1,206 @@
+@* @model List<DAL.ViewModels.ItemViewModel> *@
+@model DAL.ViewModels.MenuItemViewModel
+<div class="table-responsive">
+    <table class="table" style="border-top: none;">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 40px; border-top: none;">
+                    <input class="form-check-input main-check" type="checkbox" value="" id="flexCheckDefault">
+                </th>
+                <th scope="col" style="border-top: none;">Name</th>
+                <th scope="col" style="border-top: none;" class="text-center">Item Type</th>
+                <th scope="col" style="border-top: none;" class="text-center">Rate</th>
+                <th scope="col" style="border-top: none;" class="text-center">Quantity</th>
+                <th scope="col" style="border-top: none; width: 12px;">Available</th>
+                <th scope="col" style="border-top: none;" class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <th scope="row" style="border-top: 1px solid rgb(182, 177, 177);">
+                        <input class="form-check-input cb delete-checkbox" type="checkbox" value="@item.Itemid"
+                            id="flexCheckDefault">
+                    </th>
+                    <td style=" border-top: 1px solid rgb(182, 177, 177);">
+                        <img src="~/@item.Itemimage" class="me-2" style="width: 40px; height: 40px;" alt="">
+                        @item.Name
+                    </td>
+                    <td class="text-center" style="border-top: 1px solid rgb(182, 177, 177);">
+                        <img src="@Url.Content(item.Itemtype ? "~/images/icons/non-veg-icon.svg" : "~/images/icons/veg-icon.svg")"
+                            style="width: 25px;" alt="">
+                    </td>
+                    <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">@item.Rate</td>
+                    <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">@item.Quantity</td>
+                    <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">
+                        @* <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" @(item.Isavailable ? "checked" :
+                            "") id="flexSwitchCheckDefault" disabled>
+                        </div> *@
+                    </td>
+                    <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">
+                        <a href="#" class="edit-icon" data-id="@item.Itemid" title="Edit" data-bs-toggle="modal"
+                            data-bs-target="#EditItemModals" id="editMenuItemLink">
+                            <i class="fas fa-pencil-alt pe-2"></i>
+                        </a>
+                        <a href="#" data-bs-toggle="modal" id="DeleteModalForItem" data-bs-target="#DeleteItemModal"
+                            data-item-id="@item.Itemid">
+                            <i class="fas fa-trash-alt" style="color: black;"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-end align-items-center">
+    <span class="pe-2">Item Per Page:</span>
+    <select id="pageSizeSelect" class="form-control" style="width: 60px; height: 40px;">
+        @if (Model.PageSize == 2)
+        {
+            <option value="2" selected>2</option>
+        }
+        else
+        {
+            <option value="2">2</option>
+        }
+
+        @if (Model.PageSize == 5)
+        {
+            <option value="5" selected>5</option>
+        }
+        else
+        {
+            <option value="5">5</option>
+        }
+
+        @if (Model.PageSize == 10)
+        {
+            <option value="10" selected>10</option>
+        }
+        else
+        {
+            <option value="10">10</option>
+        }
+    </select>
+    <input type="hidden" id="totalPages" value="@Model.TotalPages" />
+    <input type="hidden" id="currentPage" value="@Model.CurrentPage" />
+
+    <!-- Pagination Controls -->
+    <div class="pagination m-0 p-3">
+        <button class="pagination-btn prev-btn me-3" data-page="@(@Model.CurrentPage - 1)" @(Model.CurrentPage == 1 ?
+            "disabled" : "") style="border: 1px solid grey; background-color: white; border-radius: 5px;"> <i
+                class="bi bi-chevron-left"></i> </button>
+
+        <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+
+        <button class="pagination-btn next-btn ms-3" data-page="@(@Model.CurrentPage + 1)" @(Model.CurrentPage ==
+            Model.TotalPages ? "disabled" : "")
+            style="border: 1px solid grey; background-color: white; border-radius: 5px;"> <i
+                class="bi bi-chevron-right"></i> </button>
+    </div>
+</div>
+@* Delete item Modal *@
+<div class="modal fade" id="DeleteItemModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 fw-semibold" id="deleteModalLabel">Delete Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="" style="height: 50px; width: 40px;">
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center fw-semibold">
+                Are you sure you want to delete this item?
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <form id="deleteForm" method="get" action="@Url.Action("DeleteMenuItem", "UserView")">
+                    <input type="hidden" id="itemIdToDelete" name="itemId" value="" />
+                    <button type="submit" class="btn btn-primary" style="height: 40px; width: 65px;">Yes</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    style="height: 40px; width: 65px;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Trigger the AJAX call when the edit link is clicked
+        $('body').on('click', '.edit-icon', function (e) {
+            e.preventDefault();
+            var itemId = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("EditMenuItem", "UserView")',
+                type: 'GET',
+                data: { id: itemId },
+                success: function (response) {
+                    $('#EditItemModals .modal-content').html(response);
+                    $('#EditItemModals').modal('show');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error:', error);
+                    alert('There was an error loading the item data.');
+                }
+            });
+        });
+    });
+    //Ajax for post method of Edit modal and hide Modal
+    $('body').on('submit', '#editMenuItemForm', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        
+        var isAvailable = $('#IsAvailable').prop('checked');  // Returns true or false
+        formData.set("Items[0].Isavailable", isAvailable);
+        console.log("Form Data:", Object.fromEntries(formData));
+
+        var formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            console.log("Form Data:", formObject);
+
+        var fileInput = $('#ImageForEditing').val();
+        console.log(FormData);
+
+        $.ajax({
+            url: '@Url.Action("EditMenuItemAsync", "UserView")',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    toastr.success(response.message);
+                    var modal = document.getElementById("EditItemModals");
+                    var modalInstance = bootstrap.Modal.getInstance(modal);
+                    modalInstance.hide();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log('Error:', error);
+                alert('There was an error updating the item.');
+            }
+        });
+    });
+
+
+    $(document).on('click', '#DeleteModalForItem', function () {
+        var itemId = $(this).data('item-id');
+        $('#itemIdToDelete').val(itemId);
+    });
+</script>
+@* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
